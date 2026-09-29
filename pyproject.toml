@@ -1,0 +1,43 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "C4",  # flake8-comprehensions
+    "DJ",  # flake8-django
+]
+ignore = [
+    "B008",  # function call in default argument (Django/DRF idiom)
+    "DJ001", # null=True on CharField is fine for our SET_NULL FK patterns
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["accounts", "audit", "banking", "config", "core", "notifications"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+testpaths = ["accounts", "banking", "audit", "notifications"]
+addopts = "-v --tb=short"
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["accounts", "audit", "banking", "core", "notifications"]
+omit = ["*/migrations/*", "*/tests/*", "*/factories.py"]
+command_line = "-m pytest"
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]

@@ -56,24 +56,16 @@ jobs:
       - name: Run tests with coverage
         run: |
           coverage run -m pytest --tb=short
-          coverage report
-      - name: Publish coverage summary
-        if: matrix.python-version == '3.12'
-        run: |
-          {
-            echo "### Coverage"
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          coverage report >> "$GITHUB_STEP_SUM" 2>/dev/null || true
-          {
-            echo '```'
-          } >> "$GITHUB_STEP_SUM"
+          coverage report | tee coverage.txt
+          coverage report --fail-under=85
       - name: Upload coverage data
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-data
-          path: .coverage
+          path: |
+            .coverage
+            coverage.txt
           include-hidden-files: true
 
   docker:
